@@ -1,0 +1,44 @@
+#!/bin/sh
+# Copyright 2015, Alexis La Goutte (See AUTHORS file)
+#
+# Resync translation between Gerrit repo and Transifex
+
+# Add line numbers
+for i in ui/qt/*.ts ; do
+    lupdate -locations absolute ui/qt/*.h ui/qt/*.cpp wireshark-qt.cpp ui/qt/*.ui -ts $i
+done
+
+# Get last translation for Transifex
+tx pull -f
+
+# Regenerate last translation for repo
+for i in ui/qt/*.ts ; do
+    lupdate -locations absolute ui/qt/*.h ui/qt/*.cpp wireshark-qt.cpp ui/qt/*.ui -ts $i
+done
+
+# Push last change tranlastion on Transifex
+tx push -t -s
+
+# Remove line numbers
+for i in ui/qt/*.ts ; do
+    lupdate -locations none -no-ui-lines ui/qt/*.h ui/qt/*.cpp wireshark-qt.cpp ui/qt/*.ui -ts $i
+done
+
+#Add new commit with last translaation update
+#git commit -a -m "TX: Update Translations (sync)"
+
+#Push update translation on Gerrit
+#git push origin HEAD:refs/for/master/tx
+
+#
+#  Editor modelines
+#
+#  Local Variables:
+#  c-basic-offset: 4
+#  tab-width: 8
+#  indent-tabs-mode: nil
+#  End:
+#
+#  ex: set shiftwidth=4 tabstop=8 expandtab:
+#  :indentSize=4:tabSize=8:noTabs=true:
+#
